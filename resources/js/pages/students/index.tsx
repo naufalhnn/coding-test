@@ -19,7 +19,6 @@ interface Grade {
   id: number;
   teacher_id: number;
   name: string;
-  students: Student[];
 }
 
 interface Student {
@@ -30,13 +29,14 @@ interface Student {
   gender: string;
   place_of_birth: string;
   date_of_birth: string;
+  grade: Grade;
 }
 
 interface Props {
-  grades: Grade[];
+  students: Student[];
 }
 
-export default function Index({ grades }: Props) {
+export default function Index({ students }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
 
@@ -48,8 +48,6 @@ export default function Index({ grades }: Props) {
       },
     });
   };
-
-  let studentCounter = 0;
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -68,6 +66,7 @@ export default function Index({ grades }: Props) {
             <TableHeader>
               <TableRow>
                 <TableHead>No</TableHead>
+                <TableHead>Grade</TableHead>
                 <TableHead>NIS</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Gender</TableHead>
@@ -77,66 +76,43 @@ export default function Index({ grades }: Props) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {grades.length === 0 ? (
+              {students.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center">
                     No data found.
                   </TableCell>
                 </TableRow>
               ) : (
-                grades.flatMap((grade) => {
-                  const headerRow = (
-                    <TableRow key={`grade-header-${grade.id}`} className="bg-gray-100 hover:bg-gray-200">
-                      <TableCell colSpan={7} className="font-bold text-gray-700">
-                        Grade: {grade.name}
-                      </TableCell>
-                    </TableRow>
-                  );
-
-                  const studentRows =
-                    grade.students.length > 0
-                      ? grade.students.map((student) => {
-                          studentCounter++;
-                          return (
-                            <TableRow key={student.id}>
-                              <TableCell>{studentCounter}</TableCell>
-                              <TableCell>{student.nis}</TableCell>
-                              <TableCell>{student.name}</TableCell>
-                              <TableCell>{student.gender}</TableCell>
-                              <TableCell>{student.place_of_birth}</TableCell>
-                              <TableCell>{student.date_of_birth}</TableCell>
-                              <TableCell>
-                                <div className="flex gap-1">
-                                  <Link href={route('students.edit', student.id)}>
-                                    <Button size={'sm'} variant={'outline'}>
-                                      <Pencil />
-                                    </Button>
-                                  </Link>
-                                  <Button
-                                    size={'sm'}
-                                    variant={'outline'}
-                                    onClick={() => {
-                                      setSelectedStudent(student);
-                                      setIsOpen(true);
-                                    }}
-                                  >
-                                    <Trash />
-                                  </Button>
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })
-                      : [
-                          <TableRow key={`no-teacher-${grade.id}`}>
-                            <TableCell colSpan={7} className="text-center text-gray-500">
-                              No students found.
-                            </TableCell>
-                          </TableRow>,
-                        ];
-
-                  return [headerRow, ...studentRows];
-                })
+                students.map((student, idx) => (
+                  <TableRow key={student.id}>
+                    <TableCell>{idx + 1}</TableCell>
+                    <TableCell>{student.grade.name}</TableCell>
+                    <TableCell>{student.nis}</TableCell>
+                    <TableCell>{student.name}</TableCell>
+                    <TableCell>{student.gender}</TableCell>
+                    <TableCell>{student.place_of_birth}</TableCell>
+                    <TableCell>{student.date_of_birth}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        <Link href={route('students.edit', student.id)}>
+                          <Button size={'sm'} variant={'outline'}>
+                            <Pencil />
+                          </Button>
+                        </Link>
+                        <Button
+                          size={'sm'}
+                          variant={'outline'}
+                          onClick={() => {
+                            setSelectedStudent(student);
+                            setIsOpen(true);
+                          }}
+                        >
+                          <Trash />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
               )}
             </TableBody>
           </Table>

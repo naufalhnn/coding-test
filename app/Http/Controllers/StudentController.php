@@ -12,8 +12,8 @@ class StudentController extends Controller
 {
     public function index()
     {
-        $grades = Grade::with(['students'])->orderBy('name')->get();
-        return Inertia::render('students/index', compact('grades'));
+        $students = Student::with(['grade'])->get();
+        return Inertia::render('students/index', compact('students'));
     }
 
     public function create()
@@ -61,5 +61,11 @@ class StudentController extends Controller
         $student->delete();
 
         return redirect()->route('students.index');
+    }
+
+    public function allData()
+    {
+        $grades = Grade::with(['students.grade'])->orderBy('name')->get();
+        return Inertia::render('students/all-data', compact('grades'));
     }
 }

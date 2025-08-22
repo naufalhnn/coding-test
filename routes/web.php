@@ -17,6 +17,7 @@ Route::middleware(['auth', 'verified'])->prefix('teachers')->group(function () {
     Route::get('/{teacher}/edit', [TeacherController::class, 'edit'])->name('teachers.edit');
     Route::put('/{teacher}/update', [TeacherController::class, 'update'])->name('teachers.update');
     Route::delete('/{teacher}/delete', [TeacherController::class, 'destroy'])->name('teachers.destroy');
+    Route::get('/all', [TeacherController::class, 'allData'])->name('teachers.all-data');
 });
 
 Route::middleware(['auth', 'verified'])->prefix('grades')->group(function () {
@@ -35,6 +36,7 @@ Route::middleware(['auth', 'verified'])->prefix('students')->group(function () {
     Route::get('/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
     Route::put('/{student}/update', [StudentController::class, 'update'])->name('students.update');
     Route::delete('/{student}/delete', [StudentController::class, 'destroy'])->name('students.destroy');
+    Route::get('/all', [StudentController::class, 'allData'])->name('students.all-data');
 });
 
 require __DIR__ . '/auth.php';

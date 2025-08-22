@@ -22,20 +22,20 @@ interface Teacher {
   gender: string;
   address: string;
   phone_number: string;
+  grades: Grade[];
 }
 
 interface Grade {
   id: number;
   teacher_id: number;
   name: string;
-  teachers: Teacher[];
 }
 
 interface Props {
-  grades: Grade[];
+  teachers: Teacher[];
 }
 
-export default function Index({ grades }: Props) {
+export default function Index({ teachers }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
 
@@ -47,7 +47,6 @@ export default function Index({ grades }: Props) {
       },
     });
   };
-  let teacherCounter = 0;
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -71,70 +70,52 @@ export default function Index({ grades }: Props) {
                 <TableHead>Gender</TableHead>
                 <TableHead>Address</TableHead>
                 <TableHead>Phone Number</TableHead>
+                <TableHead>Grades</TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {grades.length === 0 ? (
+              {teachers.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center">
                     No data found.
                   </TableCell>
                 </TableRow>
               ) : (
-                grades.flatMap((grade) => {
-                  const headerRow = (
-                    <TableRow key={`grade-header-${grade.id}`} className="bg-gray-100 hover:bg-gray-200">
-                      <TableCell colSpan={7} className="font-bold text-gray-700">
-                        Grade: {grade.name}
-                      </TableCell>
-                    </TableRow>
-                  );
-
-                  const teacherRows =
-                    grade.teachers.length > 0
-                      ? grade.teachers.map((teacher) => {
-                          teacherCounter++;
-                          return (
-                            <TableRow key={teacher.id}>
-                              <TableCell>{teacherCounter}</TableCell>
-                              <TableCell>{teacher.nip}</TableCell>
-                              <TableCell>{teacher.name}</TableCell>
-                              <TableCell>{teacher.gender}</TableCell>
-                              <TableCell>{teacher.address}</TableCell>
-                              <TableCell>{teacher.phone_number}</TableCell>
-                              <TableCell>
-                                <div className="flex gap-1">
-                                  <Link href={route('teachers.edit', teacher.id)}>
-                                    <Button size={'sm'} variant={'outline'}>
-                                      <Pencil />
-                                    </Button>
-                                  </Link>
-                                  <Button
-                                    size={'sm'}
-                                    variant={'outline'}
-                                    onClick={() => {
-                                      setSelectedTeacher(teacher);
-                                      setIsOpen(true);
-                                    }}
-                                  >
-                                    <Trash />
-                                  </Button>
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })
-                      : [
-                          <TableRow key={`no-teacher-${grade.id}`}>
-                            <TableCell colSpan={7} className="text-center text-gray-500">
-                              No teachers found.
-                            </TableCell>
-                          </TableRow>,
-                        ];
-
-                  return [headerRow, ...teacherRows];
-                })
+                teachers.map((teacher, idx) => (
+                  <TableRow key={teacher.id}>
+                    <TableCell>{idx + 1}</TableCell>
+                    <TableCell>{teacher.nip}</TableCell>
+                    <TableCell>{teacher.name}</TableCell>
+                    <TableCell>{teacher.gender}</TableCell>
+                    <TableCell>{teacher.address}</TableCell>
+                    <TableCell>{teacher.phone_number}</TableCell>
+                    <TableCell>
+                      {teacher.grades?.map((grade) => (
+                        <span className="mx-1 rounded bg-gray-100 p-1">{grade.name}</span>
+                      ))}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        <Link href={route('teachers.edit', teacher.id)}>
+                          <Button size={'sm'} variant={'outline'}>
+                            <Pencil />
+                          </Button>
+                        </Link>
+                        <Button
+                          size={'sm'}
+                          variant={'outline'}
+                          onClick={() => {
+                            setSelectedTeacher(teacher);
+                            setIsOpen(true);
+                          }}
+                        >
+                          <Trash />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
               )}
             </TableBody>
           </Table>
