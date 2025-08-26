@@ -64,13 +64,9 @@ export default function Index({ grades }: Props) {
                   return (
                     <TableRow key={grade.id}>
                       <TableCell>{grade.name}</TableCell>
-                      <TableCell>
-                        <ul>
-                          {grade.teachers.map((teacher) => (
-                            <li key={teacher.id}>{teacher.name}</li>
-                          ))}
-                        </ul>
-                      </TableCell>
+                      {grade.teachers.map((teacher) => (
+                        <TableCell key={teacher.id}>{teacher.name}</TableCell>
+                      ))}
                       <TableCell colSpan={2} className="text-center text-gray-500">
                         No students found.
                       </TableCell>
