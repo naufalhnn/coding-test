@@ -37,6 +37,11 @@ const mainNavItems: NavItem[] = [
     href: '/students',
     icon: LayoutGrid,
   },
+  {
+    title: 'Manage Student Guardians',
+    href: '/student-guardians',
+    icon: LayoutGrid,
+  },
 ];
 
 export function AppSidebar() {

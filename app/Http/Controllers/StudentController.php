@@ -65,7 +65,7 @@ class StudentController extends Controller
 
     public function allData()
     {
-        $grades = Grade::with(['students.grade'])->orderBy('name')->get();
+        $grades = Grade::with(['students.grade', 'students.student_guardian'])->orderBy('name')->get();
         return Inertia::render('students/all-data', compact('grades'));
     }
 }

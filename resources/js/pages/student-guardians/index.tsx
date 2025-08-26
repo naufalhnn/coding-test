@@ -10,53 +10,57 @@ import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Manage Grades',
-    href: '/grades',
+    title: 'Manage Student Guardians',
+    href: '/student-guardians',
   },
 ];
 
-interface Teacher {
+interface Student {
   id: number;
-  nip: number;
+  grade_id: number;
   name: string;
+  nis: number;
   gender: string;
-  address: string;
-  phone_number: string;
+  place_of_birth: string;
+  date_of_birth: string;
 }
 
-interface Grade {
+interface StudentGuardian {
   id: number;
-  teacher_id: number;
+  student_id: number;
   name: string;
-  teacher: Teacher;
+  proffesion: string;
+  address: string;
+  phone_number: string;
+  student: Student;
 }
 
 interface Props {
-  grades: Grade[];
+  studentGuardians: StudentGuardian[];
 }
 
-export default function Index({ grades }: Props) {
+export default function Index({ studentGuardians }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
+  const [selectedStudentGuardian, setSelectedStudentGuardian] = useState<StudentGuardian | null>(null);
 
   const handleDelete = () => {
-    router.delete(route('grades.destroy', selectedGrade?.id), {
+    router.delete(route('student-guardians.destroy', selectedStudentGuardian?.id), {
       onSuccess: () => {
         setIsOpen(false);
-        setSelectedGrade(null);
+        setSelectedStudentGuardian(null);
       },
     });
   };
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Manage Grades" />
+      <Head title="Manage Student Guardian" />
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-        <Heading title="Manage Grades" />
+        <Heading title="Manage Student Guardian" />
 
         <div>
-          <Link href={route('grades.create')}>
-            <Button size={'sm'}>Add Grade</Button>
+          <Link href={route('student-guardians.create')}>
+            <Button size={'sm'}>Add Student Guardian</Button>
           </Link>
         </div>
 
@@ -66,12 +70,15 @@ export default function Index({ grades }: Props) {
               <TableRow>
                 <TableHead>No</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Class Teacher</TableHead>
+                <TableHead>Proffesion</TableHead>
+                <TableHead>Address</TableHead>
+                <TableHead>Phone Number</TableHead>
+                <TableHead>Student Name</TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {grades.length === 0 && (
+              {studentGuardians.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center">
                     No data found. Add it first.
@@ -79,14 +86,17 @@ export default function Index({ grades }: Props) {
                 </TableRow>
               )}
 
-              {grades.map((grade, idx) => (
-                <TableRow key={grade.id}>
+              {studentGuardians.map((studentGuardian, idx) => (
+                <TableRow key={studentGuardian.id}>
                   <TableCell>{idx + 1}</TableCell>
-                  <TableCell>{grade.name}</TableCell>
-                  <TableCell>{grade.teacher ? grade.teacher.name : 'not yet decided'}</TableCell>
+                  <TableCell>{studentGuardian.name}</TableCell>
+                  <TableCell>{studentGuardian.proffesion}</TableCell>
+                  <TableCell>{studentGuardian.address}</TableCell>
+                  <TableCell>{studentGuardian.phone_number}</TableCell>
+                  <TableCell>{studentGuardian.student.name}</TableCell>
                   <TableCell>
                     <div className="flex gap-1">
-                      <Link href={route('grades.edit', grade.id)}>
+                      <Link href={route('student-guardians.edit', studentGuardian.id)}>
                         <Button size={'sm'} variant={'outline'}>
                           <Pencil />
                         </Button>
@@ -95,7 +105,7 @@ export default function Index({ grades }: Props) {
                         size={'sm'}
                         variant={'outline'}
                         onClick={() => {
-                          setSelectedGrade(grade);
+                          setSelectedStudentGuardian(studentGuardian);
                           setIsOpen(true);
                         }}
                       >
@@ -111,7 +121,7 @@ export default function Index({ grades }: Props) {
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Delete grade {selectedGrade?.name}?</DialogTitle>
+                <DialogTitle>Delete student guardian {selectedStudentGuardian?.name}?</DialogTitle>
               </DialogHeader>
               <DialogFooter>
                 <DialogClose asChild>

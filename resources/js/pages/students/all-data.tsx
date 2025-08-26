@@ -18,6 +18,15 @@ interface Grade {
   students: Student[];
 }
 
+interface StudentGuardian {
+  id: number;
+  student_id: number;
+  name: string;
+  proffesion: string;
+  address: string;
+  phone_number: string;
+}
+
 interface Student {
   id: number;
   grade_id: number;
@@ -27,6 +36,7 @@ interface Student {
   place_of_birth: string;
   date_of_birth: string;
   grade: Grade;
+  student_guardian?: StudentGuardian;
 }
 
 interface Props {
@@ -34,6 +44,7 @@ interface Props {
 }
 
 export default function Index({ grades }: Props) {
+  console.log(grades);
   let studentCounter = 0;
 
   return (
@@ -53,6 +64,7 @@ export default function Index({ grades }: Props) {
                 <TableHead>Gender</TableHead>
                 <TableHead>Place of Birth</TableHead>
                 <TableHead>Date of Birth</TableHead>
+                <TableHead>Student Guardian Name</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -81,6 +93,7 @@ export default function Index({ grades }: Props) {
                       <TableCell>{student.gender}</TableCell>
                       <TableCell>{student.place_of_birth}</TableCell>
                       <TableCell>{student.date_of_birth}</TableCell>
+                      <TableCell>{student.student_guardian ? student.student_guardian?.name : 'No student guardian found'}</TableCell>
                     </TableRow>
                   ));
                 })

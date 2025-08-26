@@ -1,7 +1,6 @@
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -12,76 +11,80 @@ import { FormEvent } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Manage Teachers',
-    href: '/teachers',
+    title: 'Manage Student Guardian',
+    href: '/student-guardians',
   },
   {
-    title: 'Add Teachers',
-    href: '/teachers/create',
+    title: 'Add Student Guardian',
+    href: '/student-guardians/create',
   },
 ];
 
-interface Teacher {
-  nip: string;
+interface Student {
+  id: number;
+  grade_id: number;
   name: string;
+  nis: number;
   gender: string;
-  address: string;
-  phone_number: string;
-  grade_ids: string[];
+  place_of_birth: string;
+  date_of_birth: string;
 }
 
-interface Grade {
-  id: number;
-  teacher_id: string;
+interface StudentGuardian {
+  student_id: string;
   name: string;
+  proffesion: string;
+  address: string;
+  phone_number: string;
 }
 
 interface Props {
-  grades: Grade[];
+  students: Student[];
 }
 
-export default function Create({ grades }: Props) {
-  const { data, setData, post, processing, errors } = useForm<Teacher>({
-    nip: '',
+export default function Create({ students }: Props) {
+  const { data, setData, post, processing, errors } = useForm<StudentGuardian>({
+    student_id: '',
     name: '',
-    gender: '',
+    proffesion: '',
     address: '',
     phone_number: '',
-    grade_ids: [],
   });
-
-  const handleGradeChange = (gradeId: string) => {
-    const currentIds = data.grade_ids;
-    const newIds = currentIds.includes(gradeId) ? currentIds.filter((id) => id != gradeId) : [...currentIds, gradeId];
-    setData('grade_ids', newIds);
-  };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    post(route('teachers.store'));
+    post(route('student-guardians.store'));
   };
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Create Teachers" />
+      <Head title="Create Student Guardian" />
       <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-        <Heading title="Crerate Teachers" />
+        <Heading title="Crerate Student Guardian" />
 
         <div>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="nip">NIP</Label>
-              <Input
-                name="nip"
-                id="nip"
-                type="number"
-                min={0}
-                value={data.nip}
-                onChange={(e) => setData('nip', e.target.value)}
-                placeholder="Input NIP here"
-                required
-              />
+              <Label htmlFor="student_id">Select Student</Label>
+              <Select value={data.student_id} onValueChange={(value) => setData('student_id', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select student" />
+                </SelectTrigger>
+                <SelectContent>
+                  {students.length == 0 ? (
+                    <SelectItem value="-" disabled>
+                      No student found, add it first
+                    </SelectItem>
+                  ) : (
+                    students.map((student) => (
+                      <SelectItem key={student.id} value={student.id.toString()}>
+                        {student.name}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
 
-              <InputError>{errors.nip}</InputError>
+              <InputError>{errors.student_id}</InputError>
             </div>
 
             <div className="flex flex-col gap-2">
@@ -91,7 +94,7 @@ export default function Create({ grades }: Props) {
                 id="name"
                 value={data.name}
                 onChange={(e) => setData('name', e.target.value)}
-                placeholder="Input name here"
+                placeholder="Input class name here"
                 required
               />
 
@@ -99,18 +102,20 @@ export default function Create({ grades }: Props) {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="gender">Gender</Label>
-              <Select value={data.gender} onValueChange={(value) => setData('gender', value)}>
+              <Label htmlFor="proffesion">Select Proffesion</Label>
+              <Select value={data.proffesion} onValueChange={(value) => setData('proffesion', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select gender" />
+                  <SelectValue placeholder="Select proffesion" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Male">Male</SelectItem>
-                  <SelectItem value="Female">Female</SelectItem>
+                  <SelectItem value="Teacher">Teacher</SelectItem>
+                  <SelectItem value="Farmer">Farmer</SelectItem>
+                  <SelectItem value="Doctor">Doctor</SelectItem>
+                  <SelectItem value="Pilot">Pilot</SelectItem>
                 </SelectContent>
               </Select>
 
-              <InputError>{errors.name}</InputError>
+              <InputError>{errors.proffesion}</InputError>
             </div>
 
             <div className="flex flex-col gap-2">
@@ -132,6 +137,7 @@ export default function Create({ grades }: Props) {
               <Input
                 name="phone_number"
                 id="phone_number"
+                type="number"
                 value={data.phone_number}
                 onChange={(e) => setData('phone_number', e.target.value)}
                 placeholder="Input phone number here"
@@ -139,25 +145,6 @@ export default function Create({ grades }: Props) {
               />
 
               <InputError>{errors.phone_number}</InputError>
-            </div>
-
-            <div className="flex flex-col gap-4">
-              <Label htmlFor="grade_id">Select Grades</Label>
-
-              <div className="flex flex-col gap-2">
-                {grades.map((grade) => (
-                  <div key={grade.id} className="space-x-2 rounded-lg p-2 outline outline-gray-200">
-                    <Checkbox
-                      id={`grade-${grade.id}`}
-                      checked={data.grade_ids.includes(grade.id.toString())}
-                      onCheckedChange={() => {
-                        handleGradeChange(grade.id.toString());
-                      }}
-                    />
-                    <Label>{grade.name}</Label>
-                  </div>
-                ))}
-              </div>
             </div>
 
             <div className="mt-2">

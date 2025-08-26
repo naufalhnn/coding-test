@@ -3,6 +3,7 @@
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\ShowDataController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\StudentGuardianController;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +38,15 @@ Route::middleware(['auth', 'verified'])->prefix('students')->group(function () {
     Route::put('/{student}/update', [StudentController::class, 'update'])->name('students.update');
     Route::delete('/{student}/delete', [StudentController::class, 'destroy'])->name('students.destroy');
     Route::get('/all', [StudentController::class, 'allData'])->name('students.all-data');
+});
+
+Route::middleware(['auth', 'verified'])->prefix('student-guardians')->group(function () {
+    Route::get('/', [StudentGuardianController::class, 'index'])->name('student-guardians.index');
+    Route::get('/create', [StudentGuardianController::class, 'create'])->name('student-guardians.create');
+    Route::post('/store', [StudentGuardianController::class, 'store'])->name('student-guardians.store');
+    Route::get('/{studentGuardian}/edit', [StudentGuardianController::class, 'edit'])->name('student-guardians.edit');
+    Route::put('/{studentGuardian}/update', [StudentGuardianController::class, 'update'])->name('student-guardians.update');
+    Route::delete('/{studentGuardian}/delete', [StudentGuardianController::class, 'destroy'])->name('student-guardians.destroy');
 });
 
 require __DIR__ . '/auth.php';
